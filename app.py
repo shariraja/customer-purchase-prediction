@@ -19,10 +19,10 @@ st.set_page_config(
 # ════════════════════════════════════════════════════════════════
 # GROQ CLIENT
 # ════════════════════════════════════════════════════════════════
-@st.cache_resource
 def get_groq_client():
     try:
-        return Groq(api_key=st.secrets["GROQ_API_KEY"])
+        key = st.secrets["GROQ_API_KEY"]
+        return Groq(api_key=key)
     except Exception:
         return None
 
@@ -805,7 +805,7 @@ Write a {"personalized marketing email with subject line" if is_email else "pers
                             resp = groq_client.chat.completions.create(
                                 model="llama-3.1-8b-instant",
                                 messages=[{"role":"user","content":prompt}],
-                                max_tokens=300, temperature=0.85
+                                max_tokens=300, temperature=0.85, timeout=30
                             )
                             st.session_state["ind_msg"] = resp.choices[0].message.content.strip()
                         except Exception as e:
@@ -870,7 +870,7 @@ Professional tone. Be specific with numbers."""
                             resp2 = groq_client.chat.completions.create(
                                 model="llama-3.1-8b-instant",
                                 messages=[{"role":"user","content":report_prompt}],
-                                max_tokens=400, temperature=0.6
+                                max_tokens=400, temperature=0.6, timeout=30
                             )
                             st.session_state["ind_rep"] = resp2.choices[0].message.content.strip()
                         except Exception as e:
