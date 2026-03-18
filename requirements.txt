@@ -1,9 +1,9 @@
-streamlit
-pandas
-numpy
-scikit-learn
-xgboost
-plotly
-joblib
-imbalanced-learn
-groq
+ streamlit
+   pandas
+   numpy
+   scikit-learn
+   xgboost
+   plotly
+   joblib
+   imbalanced-learn
+   requests
