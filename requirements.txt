@@ -6,4 +6,5 @@ xgboost
 plotly
 joblib
 imbalanced-learn
-groq
+openai
+
