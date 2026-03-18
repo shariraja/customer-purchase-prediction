@@ -21,12 +21,25 @@ st.set_page_config(
 # ════════════════════════════════════════════════════════════════
 def get_groq_client():
     try:
-        key = st.secrets["GROQ_API_KEY"]
-        return Groq(api_key=key)
+        return Groq(api_key=st.secrets["GROQ_API_KEY"])
     except Exception:
         return None
 
 groq_client = get_groq_client()
+
+def groq_chat(prompt, max_tokens=300, temperature=0.85):
+    try:
+        if not groq_client:
+            return "Error: API key not found."
+        resp = groq_client.chat.completions.create(
+            model       = "llama-3.1-8b-instant",
+            messages    = [{"role": "user", "content": prompt}],
+            max_tokens  = max_tokens,
+            temperature = temperature,
+        )
+        return resp.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 # ════════════════════════════════════════════════════════════════
 # LOAD MODEL
@@ -801,15 +814,8 @@ Write a {"personalized marketing email with subject line" if is_email else "pers
 - No placeholder brackets. Write only the message."""
 
                     with st.spinner("Writing personalized message..."):
-                        try:
-                            resp = groq_client.chat.completions.create(
-                                model="llama-3.1-8b-instant",
-                                messages=[{"role":"user","content":prompt}],
-                                max_tokens=300, temperature=0.85, timeout=30
-                            )
-                            st.session_state["ind_msg"] = resp.choices[0].message.content.strip()
-                        except Exception as e:
-                            st.session_state["ind_msg"] = f"Error: {e}"
+                        result = groq_chat(prompt, max_tokens=300, temperature=0.85)
+                        st.session_state["ind_msg"] = result
 
                 if st.session_state.get("ind_msg",""):
                     st.markdown(f"""
@@ -866,15 +872,8 @@ Write a concise customer intelligence report:
 Professional tone. Be specific with numbers."""
 
                     with st.spinner("Generating customer report..."):
-                        try:
-                            resp2 = groq_client.chat.completions.create(
-                                model="llama-3.1-8b-instant",
-                                messages=[{"role":"user","content":report_prompt}],
-                                max_tokens=400, temperature=0.6, timeout=30
-                            )
-                            st.session_state["ind_rep"] = resp2.choices[0].message.content.strip()
-                        except Exception as e:
-                            st.session_state["ind_rep"] = f"Error: {e}"
+                        result2 = groq_chat(report_prompt, max_tokens=400, temperature=0.6)
+                        st.session_state["ind_rep"] = result2
 
                 if st.session_state.get("ind_rep",""):
                     st.markdown(f"""
@@ -1182,16 +1181,7 @@ Write a {'personalized marketing email with subject line' if is_email else 'pers
 - {'Subject + 3-4 sentence body' if is_email else 'One SMS under 160 chars'}
 - No placeholder brackets. Write only the message."""
 
-                                try:
-                                    resp = groq_client.chat.completions.create(
-                                        model="llama-3.1-8b-instant",
-                                        messages=[{"role":"user","content":prompt}],
-                                        max_tokens=300,
-                                        temperature=0.85
-                                    )
-                                    msg = resp.choices[0].message.content.strip()
-                                except Exception as e:
-                                    msg = f"[Error: {e}]"
+                                msg = groq_chat(prompt, max_tokens=300, temperature=0.85)
 
                                 msgs_out.append({
                                     'Customer'   : name,
@@ -1318,17 +1308,7 @@ Write a professional Marketing Intelligence Report with:
 
 Be specific with numbers. Professional business language."""
 
-                            try:
-                                r = groq_client.chat.completions.create(
-                                    model="llama-3.1-8b-instant",
-                                    messages=[{"role":"user","content":report_prompt}],
-                                    max_tokens=700,
-                                    temperature=0.6
-                                )
-                                report_text = r.choices[0].message.content.strip()
-                            except Exception as e:
-                                report_text = f"Report generation failed: {e}"
-
+                            report_text = groq_chat(report_prompt, max_tokens=700, temperature=0.6)
                             st.session_state.report_text = report_text
                             st.session_state.report_done = True
 
@@ -1608,4 +1588,3 @@ with tab4:
         Random Forest + LLaMA 3 Generative AI · {datetime.now().year}
     </div>
     """, unsafe_allow_html=True)
-    
