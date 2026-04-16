@@ -308,77 +308,82 @@ hr { border-color: var(--border) !important; margin: 2rem 0 !important; }
     margin-top:.75rem;
 }
 
-/* ── SIDEBAR TOGGLE BUTTON ── */
-.sidebar-toggle-btn {
-    position: fixed;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    z-index: 99999;
-    width: 22px;
-    height: 64px;
-    background: #2351d4;
-    border-radius: 0 10px 10px 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 3px 0 12px rgba(35,81,212,.35);
-    transition: width .2s ease, background .2s ease;
-    border: none;
-    outline: none;
+/* ══════════════════════════════════════════════════════
+   SIDEBAR TOGGLE BUTTONS — NATIVE STREAMLIT CONTROLS
+   Sidebar collapse arrow (when closed) + button (when open)
+   Both made bright blue and clearly visible.
+══════════════════════════════════════════════════════ */
+
+/* ── Arrow tab shown on LEFT EDGE when sidebar is COLLAPSED ── */
+[data-testid="collapsedControl"] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: #2351d4 !important;
+    border-radius: 0 10px 10px 0 !important;
+    width: 26px !important;
+    height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 3px 0 16px rgba(35,81,212,.5) !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: width .18s ease, box-shadow .18s ease !important;
 }
-.sidebar-toggle-btn:hover {
-    width: 28px;
-    background: #1a3fb5;
+[data-testid="collapsedControl"]:hover {
+    width: 32px !important;
+    box-shadow: 4px 0 24px rgba(35,81,212,.7) !important;
 }
-.sidebar-toggle-btn svg {
-    width: 12px;
-    height: 12px;
-    fill: #ffffff;
-    flex-shrink: 0;
-    transition: transform .25s ease;
+[data-testid="collapsedControl"] svg {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    width: 13px !important;
+    height: 13px !important;
 }
-.sidebar-toggle-btn.collapsed svg {
-    transform: rotate(180deg);
+
+/* ── Collapse button INSIDE sidebar (top of sidebar panel) ── */
+[data-testid="stSidebarCollapseButton"] button,
+[data-testid="stSidebarCollapseButton"] > button,
+section[data-testid="stSidebar"] button[kind="header"],
+section[data-testid="stSidebar"] [data-testid="stBaseButton-header"] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: #2351d4 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 10px rgba(35,81,212,.4) !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    transition: background .18s, box-shadow .18s !important;
+}
+[data-testid="stSidebarCollapseButton"] button:hover,
+[data-testid="stSidebarCollapseButton"] > button:hover,
+section[data-testid="stSidebar"] button[kind="header"]:hover,
+section[data-testid="stSidebar"] [data-testid="stBaseButton-header"]:hover {
+    background: #1a3fb5 !important;
+    box-shadow: 0 4px 18px rgba(35,81,212,.55) !important;
+}
+[data-testid="stSidebarCollapseButton"] button svg,
+[data-testid="stSidebarCollapseButton"] > button svg,
+section[data-testid="stSidebar"] button[kind="header"] svg,
+section[data-testid="stSidebar"] [data-testid="stBaseButton-header"] svg {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    width: 13px !important;
+    height: 13px !important;
 }
 </style>
-""", unsafe_allow_html=True)
-
-# ── Sidebar Toggle Button (floating, left edge) ──
-st.markdown("""
-<button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Show / Hide Sidebar" onclick="toggleSidebar()">
-    <svg viewBox="0 0 10 14" xmlns="http://www.w3.org/2000/svg">
-        <polyline points="7,1 2,7 7,13" stroke="#fff" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-    </svg>
-</button>
-
-<script>
-(function() {
-    var collapsed = false;
-    window.toggleSidebar = function() {
-        var btn      = document.getElementById('sidebarToggleBtn');
-        var sidebar  = window.parent.document.querySelector('[data-testid="stSidebar"]');
-        var collapseBtn = window.parent.document.querySelector('[data-testid="collapsedControl"]');
-        var expandBtn   = window.parent.document.querySelector('[data-testid="stSidebarCollapsedControl"]');
-
-        if (!collapsed) {
-            if (collapseBtn) collapseBtn.click();
-            else if (sidebar) sidebar.style.display = 'none';
-            collapsed = true;
-            btn.classList.add('collapsed');
-            btn.title = 'Show Sidebar';
-        } else {
-            if (expandBtn) expandBtn.click();
-            else if (sidebar) sidebar.style.display = '';
-            collapsed = false;
-            btn.classList.remove('collapsed');
-            btn.title = 'Hide Sidebar';
-        }
-    };
-})();
-</script>
 """, unsafe_allow_html=True)
 
 
@@ -450,9 +455,7 @@ st.markdown(f"""
     flex-wrap:wrap;
     gap:1rem;
 ">
-    <!-- Left: Logo Block -->
     <div style="display:flex;align-items:center;gap:1.25rem;">
-        <!-- Icon -->
         <div style="
             width:60px;height:60px;
             background:#1e2d4a;
@@ -465,7 +468,6 @@ st.markdown(f"""
             letter-spacing:-2px;
             flex-shrink:0;
         ">S</div>
-        <!-- Brand Text -->
         <div>
             <div style="
                 font-family:'Helvetica Neue',Arial,sans-serif;
@@ -490,7 +492,6 @@ st.markdown(f"""
             "></div>
         </div>
     </div>
-    <!-- Center: PurchaseIQ product info -->
     <div style="text-align:center;">
         <div style="
             font-family:'JetBrains Mono',monospace;
@@ -508,7 +509,6 @@ st.markdown(f"""
             letter-spacing:.1em;margin-top:2px;
         ">ML + GEN AI · v3.0</div>
     </div>
-    <!-- Right: Status badges -->
     <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
         <span style="
             background:{'rgba(13,158,110,.15)' if model_ok else 'rgba(209,48,48,.15)'};
@@ -637,7 +637,6 @@ with tab1:
             pred = model.predict(X)[0]
             act  = get_action(prob, avg_order_value)
 
-            # Save all inputs + results to session_state
             st.session_state['ind_prob']          = prob
             st.session_state['ind_pred']          = int(pred)
             st.session_state['ind_act']           = act
@@ -651,7 +650,6 @@ with tab1:
             st.session_state['ind_order']         = avg_order_value
             st.session_state['ind_last_purchase'] = last_purchase
             st.session_state['ind_done']          = True
-            # Clear old AI results on new prediction
             st.session_state['ind_msg'] = ""
             st.session_state['ind_rep'] = ""
 
@@ -719,7 +717,6 @@ with tab1:
         ov_s      = st.session_state['ind_order']
         lp_s      = st.session_state['ind_last_purchase']
 
-        # ── KPIs ──
         k1,k2,k3,k4 = st.columns(4)
         with k1: st.metric("Purchase Probability", f"{prob:.1%}")
         with k2: st.metric("Priority Level",       get_priority(prob).split()[-1])
@@ -729,7 +726,6 @@ with tab1:
         st.markdown("<br>", unsafe_allow_html=True)
         cl, cr = st.columns(2)
 
-        # ── Gauge ──
         with cl:
             bc = "#0d9e6e" if prob>=.75 else "#c77700" if prob>=.5 else "#2351d4"
             fig_g = go.Figure(go.Indicator(
@@ -758,7 +754,6 @@ with tab1:
                                 plot_bgcolor="rgba(0,0,0,0)")
             st.plotly_chart(fig_g, use_container_width=True)
 
-        # ── Decision Panel ──
         with cr:
             if pred==1:
                 rb,rbd,rc = "#ecfdf5","#a7f3d0","#0d9e6e"
@@ -803,7 +798,6 @@ with tab1:
             </div>
             """, unsafe_allow_html=True)
 
-        # ── Signal Breakdown ──
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown('<div class="section-label">Input Signal Analysis</div>',
                     unsafe_allow_html=True)
@@ -831,15 +825,11 @@ with tab1:
         )
         st.plotly_chart(fig_b, use_container_width=True)
 
-        # ════════════════════════════════════
-        # AI MESSAGE + REPORT — INDIVIDUAL
-        # ════════════════════════════════════
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("<hr>", unsafe_allow_html=True)
 
         ai_col1, ai_col2 = st.columns(2)
 
-        # ── AI Message ──
         with ai_col1:
             st.markdown("""
             <div class="section-heading">✉️ AI Personalized Message</div>
@@ -904,7 +894,6 @@ Write a {"personalized marketing email with subject line" if is_email else "pers
                         key="ind_msg_dl"
                     )
 
-        # ── AI Report ──
         with ai_col2:
             st.markdown("""
             <div class="section-heading">📄 AI Customer Report</div>
@@ -996,7 +985,6 @@ with tab2:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── STEP 1: Template ──
     st.markdown('<div class="section-label">Step 1 — Download Sample Template</div>',
                 unsafe_allow_html=True)
     sample_df = pd.DataFrame(SAMPLE_DATA)
@@ -1016,7 +1004,6 @@ with tab2:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ── STEP 2: Upload ──
     st.markdown('<div class="section-label">Step 2 — Upload Customer List</div>',
                 unsafe_allow_html=True)
 
@@ -1044,7 +1031,6 @@ with tab2:
             st.markdown('<div class="section-label">Step 3 — Run ML Prediction</div>',
                         unsafe_allow_html=True)
 
-            # ── PREDICT BUTTON ──
             if st.button("⚡  Predict All Customers", use_container_width=True):
                 if model is None:
                     st.error("Model not loaded. Check rf_model.pkl.")
@@ -1072,7 +1058,6 @@ with tab2:
                                                  for p in preds]
                         })
 
-                        # ── SAVE TO SESSION STATE ──
                         st.session_state.probs     = probs
                         st.session_state.preds     = preds
                         st.session_state.res_df    = res
@@ -1091,7 +1076,6 @@ with tab2:
                         st.session_state.msgs_out    = []
                         st.session_state.report_text = ""
 
-            # ── SHOW RESULTS (from session state) ──
             if st.session_state.batch_done and st.session_state.res_df is not None:
                 probs     = st.session_state.probs
                 preds     = st.session_state.preds
@@ -1163,9 +1147,6 @@ with tab2:
                     f"Campaign budget: Rs. {disc_cost:,.0f}"
                 )
 
-                # ════════════════════════════════════
-                # AI PERSONALIZED MESSAGES
-                # ════════════════════════════════════
                 st.markdown("<br>", unsafe_allow_html=True)
                 st.markdown("<hr>", unsafe_allow_html=True)
                 st.markdown("""
@@ -1268,11 +1249,9 @@ Write a {'personalized marketing email with subject line' if is_email else 'pers
                             prog_text.empty()
                             prog_bar.empty()
 
-                            # Save to session state
                             st.session_state.msgs_out  = msgs_out
                             st.session_state.msgs_done = True
 
-                    # Show messages from session state
                     if st.session_state.msgs_done and st.session_state.msgs_out:
                         st.markdown("<br>", unsafe_allow_html=True)
                         st.markdown(
@@ -1321,9 +1300,6 @@ Write a {'personalized marketing email with subject line' if is_email else 'pers
                             f"✅ {len(st.session_state.msgs_out)} AI messages generated!"
                         )
 
-                # ════════════════════════════════════
-                # AI INTELLIGENCE REPORT
-                # ════════════════════════════════════
                 st.markdown("<br>", unsafe_allow_html=True)
                 st.markdown("<hr>", unsafe_allow_html=True)
                 st.markdown("""
@@ -1358,7 +1334,7 @@ Write a {'personalized marketing email with subject line' if is_email else 'pers
 
 BATCH ANALYSIS RESULTS:
 - Total Customers: {len(res)}
-- High Priority (≥75%): {high}
+- High Priority (>=75%): {high}
 - Medium Priority (50-75%): {medium}
 - Low Priority (<50%): {low}
 - Average Purchase Probability: {avg_prob:.1%}
@@ -1384,7 +1360,6 @@ Be specific with numbers. Professional business language."""
                             st.session_state.report_text = report_text
                             st.session_state.report_done = True
 
-                    # Show report from session state
                     if st.session_state.report_done and st.session_state.report_text:
                         st.markdown(f"""
                         <div class="card" style="margin-top:1rem;">
@@ -1424,7 +1399,6 @@ Be specific with numbers. Professional business language."""
             st.error(f"Error: {e}")
             st.info("Ensure your CSV matches the template format.")
     else:
-        # Reset session when no file uploaded
         st.session_state.batch_done  = False
         st.session_state.msgs_done   = False
         st.session_state.report_done = False
@@ -1434,7 +1408,7 @@ Be specific with numbers. Professional business language."""
                     font-family:'JetBrains Mono',monospace;font-size:.78rem;
                     line-height:2;border:2px dashed #c7cde3;border-radius:16px;
                     background:#f8f9fc;margin-top:.5rem;">
-            ⬆️ Download template · Fill with your data · Upload here<br>
+            Upload template · Fill with your data · Upload here<br>
             Then get <strong style="color:#2351d4;">
             ML predictions + AI messages + AI report</strong>
         </div>
@@ -1496,7 +1470,7 @@ with tab3:
             textfont=dict(color=['#d13030','#0d9e6e'],size=12,family='JetBrains Mono'),
             width=.45
         ))
-        fig_roi.add_annotation(x=.5,y=280000,text="<b>↓ 90% Cost Reduction</b>",
+        fig_roi.add_annotation(x=.5,y=280000,text="<b>90% Cost Reduction</b>",
                                showarrow=False,
                                font=dict(color='#2351d4',size=14,family='Syne'))
         fig_roi.update_layout(
@@ -1539,7 +1513,7 @@ with tab3:
         [dl1,dl2,dl3],
         ["🎯","📱","⏭️"],
         ["10% Discount","Reminder SMS","No Action"],
-        ["Prob ≥ 75% AND Order ≥ Rs.2,000","Prob ≥ 50%","Prob < 50%"],
+        ["Prob >= 75% AND Order >= Rs.2,000","Prob >= 50%","Prob < 50%"],
         ["Immediate discount — high ROI target",
          "Low-cost SMS touchpoint",
          "Save budget entirely"],
@@ -1592,7 +1566,7 @@ with tab4:
             ("Precision",       "60.4%",      "#0d9e6e"),
             ("Recall",          "71.5%",      "#0d9e6e"),
             ("F1-Score",        "65.5%",      "#0d9e6e"),
-            ("ROC-AUC ★ Best", "0.910",       "#2351d4"),
+            ("ROC-AUC Best",    "0.910",       "#2351d4"),
             ("Confusion TN/TP", "1905 / 273", "#0d1117"),
         ]
         st.markdown(
