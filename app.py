@@ -29,9 +29,10 @@ groq_client = get_groq_client()
 
 def groq_chat(prompt, max_tokens=300, temperature=0.85):
     try:
-        if not groq_client:
+        client = get_groq_client()
+        if not client:
             return "Error: API key not found."
-        resp = groq_client.chat.completions.create(
+        resp = client.chat.completions.create(
             model       = "llama-3.1-8b-instant",
             messages    = [{"role": "user", "content": prompt}],
             max_tokens  = max_tokens,
@@ -306,7 +307,78 @@ hr { border-color: var(--border) !important; margin: 2rem 0 !important; }
     line-height:1.7; white-space:pre-wrap; font-family:'Inter',sans-serif;
     margin-top:.75rem;
 }
+
+/* ── SIDEBAR TOGGLE BUTTON ── */
+.sidebar-toggle-btn {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    z-index: 99999;
+    width: 22px;
+    height: 64px;
+    background: #2351d4;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 3px 0 12px rgba(35,81,212,.35);
+    transition: width .2s ease, background .2s ease;
+    border: none;
+    outline: none;
+}
+.sidebar-toggle-btn:hover {
+    width: 28px;
+    background: #1a3fb5;
+}
+.sidebar-toggle-btn svg {
+    width: 12px;
+    height: 12px;
+    fill: #ffffff;
+    flex-shrink: 0;
+    transition: transform .25s ease;
+}
+.sidebar-toggle-btn.collapsed svg {
+    transform: rotate(180deg);
+}
 </style>
+""", unsafe_allow_html=True)
+
+# ── Sidebar Toggle Button (floating, left edge) ──
+st.markdown("""
+<button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Show / Hide Sidebar" onclick="toggleSidebar()">
+    <svg viewBox="0 0 10 14" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="7,1 2,7 7,13" stroke="#fff" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+</button>
+
+<script>
+(function() {
+    var collapsed = false;
+    window.toggleSidebar = function() {
+        var btn      = document.getElementById('sidebarToggleBtn');
+        var sidebar  = window.parent.document.querySelector('[data-testid="stSidebar"]');
+        var collapseBtn = window.parent.document.querySelector('[data-testid="collapsedControl"]');
+        var expandBtn   = window.parent.document.querySelector('[data-testid="stSidebarCollapsedControl"]');
+
+        if (!collapsed) {
+            if (collapseBtn) collapseBtn.click();
+            else if (sidebar) sidebar.style.display = 'none';
+            collapsed = true;
+            btn.classList.add('collapsed');
+            btn.title = 'Show Sidebar';
+        } else {
+            if (expandBtn) expandBtn.click();
+            else if (sidebar) sidebar.style.display = '';
+            collapsed = false;
+            btn.classList.remove('collapsed');
+            btn.title = 'Hide Sidebar';
+        }
+    };
+})();
+</script>
 """, unsafe_allow_html=True)
 
 
